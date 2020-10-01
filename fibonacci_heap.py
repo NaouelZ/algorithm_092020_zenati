@@ -53,6 +53,9 @@ class FibonacciHeap():
     total_nodes = 0
 
     def insert(self, value: int) -> None:
+        """
+        Ajoute une valeur dans l'arbre
+        """
         node_to_insert = self.Node(value)
         node_to_insert.left = node_to_insert.right = node_to_insert
         if self.root_node is None:
@@ -68,50 +71,72 @@ class FibonacciHeap():
         return node_to_insert
     
     def find_min(self) -> int:
+        """
+        Retourne la valeur minimum dans l'arbre
+        """
         return self.min_node.value
 
     def delete_min(self) -> int:
         """
         Supprime et retourne la valeur minimum dans l'arbre
         """
+        ## Récupérer  la valeur min
         minimun = self.min_node
-        if minimun is not None:
-            if minimun == minimun.right:
-                self.min_node = self.root_node = None
-            else:
-                self.min_node = minimun.right
-            self.total_nodes -= 1
-        return minimun
+        
+        ## Rattacher les enfants de cette valeur à ta liste de racine
+        if self.root_node is None:
+            self.root_node = minimun.child
+        else:
+            minimun.right = self.root_node.right
+            minimun.left = self.root_node
+            self.root_node.right.left = minimun.child
+            self.root_node.right = minimun.child
 
+        ## Suppression du minimun et de sa branche
+        if minimun == self.root_node:
+            self.root_list = minimun.right
+        minimun.left.right = minimun.right
+        minimun.right.left = minimun.left
+
+        if minimun == minimun.right:
+                self.min_node = self.root_node = None
+        else:
+                self.min_node = minimun.right
+        self.total_nodes -= 1
+        return minimun.value
 
     def merge(self, fibonnaci_heap: Heap) -> None:
         """
         Fusionne deux arbres
         """
         F = FibonacciHeap()
-        F.root_node, H.min_node = self.root_node, self.min_node
+        F.root_node, F.min_node = self.root_node, self.min_node
         last = fibonnaci_heap.root_node.left
         fibonnaci_heap.root_node.left = F.root_node.left
         F.root_node.left.right = fibonnaci_heap.root_node
         F.root_node.left = last
         F.root_node.left.right = F.root_node
         if fibonnaci_heap.min_node.value < F.min_node.value:
-            H.min_node = fibonnaci_heap.min_node
-        H.total_nodes = self.total_nodes + fibonnaci_heap.total_nodes
+            F.min_node = fibonnaci_heap.min_node
+        F.total_nodes = self.total_nodes + fibonnaci_heap.total_nodes
         return F
 
-## Création de mon premier abre
+    def total(self) -> int:
+        return self.total_nodes
+
+print("*******CREATION DU PREMIER ARBRE*******")
 f = FibonacciHeap()
 
-f.insert(4)
+f.insert(6)
 f.insert(8)
 f.insert(5)
+f.insert(3)
 
 ## Minimun de f
 m = f.find_min()
-print(m)
+print("Le minimum du premier arbre est : ", m)
 
-## Création du second abre
+print("*******CREATION DU SECOND ARBRE*******")
 f2 = FibonacciHeap()
 
 f2.insert(2)
@@ -120,12 +145,19 @@ f2.insert(18)
 
 ## Minimun de f2
 m2 = f2.find_min()
-print(m2)
+print("Le minimum du second arbre est : ", m2)
 
-## fusion des arbres
+print("****************MERGE****************")
 merge = f.merge(f2)
 
-## minimun des 2 arbres fusionner
+## minimun des 2 arbres
 merge_min = merge.find_min()
-print(merge_min)
-
+print("Le minimum des 2 arbres fusionnés est : ", merge_min)
+t1 = merge.total()
+print("Taille du Heap : ", t1)
+del_min = merge.delete_min()
+print("valeur minimale à supprimer : ", del_min)
+merge_min_two = merge.find_min()
+print("Le minimun des 2 arbres fussionnés après supp est ", merge_min_two)
+t2 = merge.total()
+print("Taille du Heap après suppression du minimun : ", t2)
