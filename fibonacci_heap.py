@@ -71,7 +71,7 @@ class FibonacciHeap():
         return node_to_insert
     
     def find_min(self) -> int:
-        return self.min_node
+        return self.min_node.value
 
     def delete_min(self) -> int:
         """
@@ -114,7 +114,3 @@ f.insert(3,5)
 print(f)
 
 m = f.find_min()
-print(m)
-
-q = f.delete_min()
-print(q)
